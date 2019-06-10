@@ -151,6 +151,9 @@ class App extends React.Component {
         <h1>
           Random Recipes
         </h1>
+        <p>Do you ever have a single ingredient in your fridge that you don't know what to do with?</p>
+        <p>Enter keywords below to receive 10 random recipe suggestions!</p>
+        <hr />
         <Container>
           <Row>
             <Col>

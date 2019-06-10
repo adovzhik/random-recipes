@@ -23,8 +23,14 @@
 
 h1 {
   font-weight: bold;
+  text-align: center; 
 }
 
 h2 {
   font-variant: small-caps;
+}
+
+p {
+  text-align: center;
+  font-style: italic;
 }
