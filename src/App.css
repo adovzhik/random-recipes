@@ -10,15 +10,21 @@
 .recipeImage {
   float: left;
   padding: 10px 10px 10px 10px;
-  /* width: 50%; */
   object-fit: cover;
 }
 
 .RecipeCard {
-  /* width: 12rem; */
   margin: 5px;
 }
 
 .Button {
   margin: 5px;
+}
+
+h1 {
+  font-weight: bold;
+}
+
+h2 {
+  font-variant: small-caps;
 }

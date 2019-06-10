@@ -2,6 +2,9 @@ import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/Button';
+
 import RecipeList from './RecipeList.js';
 import './App.css';
 
@@ -22,27 +25,26 @@ class App extends React.Component {
       resultsText: "",
     }
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleTextInput = this.handleTextInput.bind(this);
     this.handleFormSelect = this.handleFormSelect.bind(this);
   }
 
   componentDidMount() {
     this.updateStateFromLocalStorage();
-
     // update recipes in localStorage when user leaves/refreshes the page
     window.addEventListener(
       "beforeunload",
-      this.updateRecipeInLocalStorage.bind(this)
+      this.updateRecipesInLocalStorage.bind(this)
     );
   }
 
   componentWillUnmount() {
     window.removeEventListener(
       "beforeunload",
-      this.updateRecipeInLocalStorage.bind(this)
+      this.updateRecipesInLocalStorage.bind(this)
     );
-
     // saves if component has a chance to unmount
-    this.updateRecipeInLocalStorage();
+    this.updateRecipesInLocalStorage();
   }
 
   saveRecipe = (idx) => {
@@ -70,7 +72,7 @@ class App extends React.Component {
     });
   }
 
-  updateRecipeInLocalStorage() {
+  updateRecipesInLocalStorage() {
     localStorage.setItem("savedRecipes", JSON.stringify(this.state.savedRecipes));
   }
 
@@ -84,28 +86,23 @@ class App extends React.Component {
     }
   }
 
+  handleTextInput(event) {
+    this.setState({ ingredient: event.target.value });
+  }
+
   handleFormSelect(event) {
-    console.log(event.target.value);
     this.setState({ dietaryRestriction: event.target.value });
   }
 
   handleSubmit(event) {
     event.preventDefault();
-    this.setState({
-      ingredient: this.ingredInput.value,
-    });
+    this.fetchData();
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    // only fetch if a new ingredient was entered
-    if (this.state.ingredient !== prevState.ingredient) {
-      this.fetchData();
-    }
-  }
   fetchData() {
     // API REQUEST
     const food = this.state.ingredient;
-    // optional parameter
+    // optional health restriction parameter
     const healthParam = (this.state.dietaryRestriction === '') ? '' : `&health=${this.state.dietaryRestriction}`;
     // find 10 random results
     const start = Math.floor(Math.random() * 80);
@@ -114,7 +111,6 @@ class App extends React.Component {
     // request URL
     const url = `${BASE_URL}search?q=${food}&app_id=${API_ID}&app_key=${API_KEY}${rangeParam}${healthParam}`;
 
-    console.log(url);
     fetch(url)
       .then(response => {
         return response.json();
@@ -127,15 +123,13 @@ class App extends React.Component {
             resultsText: "No results found, please try a different query!",
           });
         }
-        console.log(recipes);
         this.setState({
-          returnedRecipes: recipes,
-          isLoading: false
+          returnedRecipes: recipes
         });
       })
       .catch(error => {
         this.setState({
-          hasError: true,
+          resultsText: "Error retrieving recipes. Please try again later.",
         });
       });
   }
@@ -161,20 +155,25 @@ class App extends React.Component {
           <Row>
             <Col>
               <h2>Search Now</h2>
-              <form onSubmit={this.handleSubmit}>
-                <label>
-                  Ingredient(s):
-                <input type="text" ref={el => this.ingredInput = el} />
-                </label>
-                <select onChange={this.handleFormSelect}>
-                  <option value="">None</option>
-                  <option value="tree-nut-free">Tree Nut-Free</option>
-                  <option value="peanut-free">Peanut-Free</option>
-                  <option value="vegetarian">Vegetarian</option>
-                  <option value="vegan">Vegan</option>
-                </select>
-                <input type="submit" value="Find Recipes" />
-              </form>
+              <Form onSubmit={this.handleSubmit}>
+                <Form.Group >
+                  <Form.Label>Ingredient(s):</Form.Label>
+                  <Form.Control type="text" placeholder="ex: onion, potato and celery" onChange={this.handleTextInput} />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label>Dietary Restrictions (optional):</Form.Label>
+                  <Form.Control as="select" onChange={this.handleFormSelect}>
+                    <option value="">None</option>
+                    <option value="tree-nut-free">Tree Nut-Free</option>
+                    <option value="peanut-free">Peanut-Free</option>
+                    <option value="vegetarian">Vegetarian</option>
+                    <option value="vegan">Vegan</option>
+                  </Form.Control>
+                </Form.Group>
+                <Button variant="outline-primary" type="submit">
+                  Find Recipes
+                </Button>
+              </Form>
             </Col>
             <Col className="column">
               {resultsElem}
