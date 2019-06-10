@@ -2,15 +2,20 @@
   margin: 10px;
 }
 
+.column {
+  height: 90vh;
+  overflow: auto;
+}
+
 .recipeImage {
   float: left;
   padding: 10px 10px 10px 10px;
-  width: 50%;
+  /* width: 50%; */
   object-fit: cover;
 }
 
 .RecipeCard {
-  width: 12rem;
+  /* width: 12rem; */
   margin: 5px;
 }
 
